@@ -13,7 +13,6 @@ import java.io.Serializable;
 public class PostulanteRegistro extends AppCompatActivity {
 
     Postulante postulante;
-    Bundle args = new Bundle();
     EditText dni, apellidos, nombres, fechaNac, colegioProcedencia, carrera;
 
     @Override
@@ -42,11 +41,11 @@ public class PostulanteRegistro extends AppCompatActivity {
                     colegioProcedencia.getText().toString(),
                     carrera.getText().toString()
             );
-
-            args.putSerializable("postulante", (Serializable) postulante);
             i.putExtra("postulante", postulante);
+            setResult(1,i);
 
-            startActivity(i);
+            PostulanteRegistro.super.onBackPressed();
+
         }catch (Exception e){
             Toast.makeText(getApplicationContext(), "Error: "+e, Toast.LENGTH_SHORT).show();
         }

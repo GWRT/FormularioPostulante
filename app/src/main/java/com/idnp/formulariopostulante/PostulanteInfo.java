@@ -1,5 +1,6 @@
 package com.idnp.formulariopostulante;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class PostulanteInfo extends AppCompatActivity {
@@ -23,10 +25,21 @@ public class PostulanteInfo extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_postulantes);
 
+        if(savedInstanceState != null){
+            Bundle argsPI = savedInstanceState.getBundle("savedState");
+            postulantes.addAll((ArrayList<Postulante>) argsPI.getSerializable("bundlePI"));
+        }
         Intent intent = getIntent();
         Bundle args = intent.getBundleExtra("bundle");
-        postulantes = (ArrayList<Postulante>) args.getSerializable("arraylist");
+        postulantes.addAll((ArrayList<Postulante>) args.getSerializable("arraylist"));
+    }
 
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Bundle args = new Bundle();
+        args.putSerializable("bundlePI",(Serializable) postulantes);
+        outState.putBundle("savedState", args);
     }
 
     public void buscar(View view){
@@ -37,7 +50,7 @@ public class PostulanteInfo extends AppCompatActivity {
 
             buscarPostulante(dni_,postulantes);
         }catch (Exception e){
-            Toast.makeText(getApplicationContext(), "Error "+e, Toast.LENGTH_SHORT).show();
+            imprimir("Ingrese un numero de DNI valido");
         }
     }
 
@@ -51,7 +64,7 @@ public class PostulanteInfo extends AppCompatActivity {
             }
         }
 
-        if(!found) imprimir();
+        if(!found) imprimir("No se encontro un resultado");
 
     }
 
@@ -69,14 +82,9 @@ public class PostulanteInfo extends AppCompatActivity {
         labelLista.setText(resultado);
     }
 
-    public void imprimir(){
+    public void imprimir(String message){
         labelLista = findViewById(R.id.labelLista);
-        String resultado = "No se encontro un resultado";
-        labelLista.setText(resultado);
+        labelLista.setText(message);
     }
 
-    public void regresar (View view){
-        Intent i = new Intent(this, Menu.class);
-        startActivity(i);
-    }
 }
